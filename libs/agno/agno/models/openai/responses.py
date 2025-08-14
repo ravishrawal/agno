@@ -1,6 +1,7 @@
 import time
 from dataclasses import dataclass
 from typing import Any, AsyncIterator, Dict, Iterator, List, Optional, Tuple, Type, Union
+from typing_extensions import Literal
 
 import httpx
 from pydantic import BaseModel
@@ -44,7 +45,8 @@ class OpenAIResponses(Model):
     top_p: Optional[float] = None
     truncation: Optional[str] = None
     user: Optional[str] = None
-
+    verbosity: Optional[Literal["low", "medium", "high"]] = None
+    
     request_params: Optional[Dict[str, Any]] = None
 
     # Client parameters
@@ -191,6 +193,12 @@ class OpenAIResponses(Model):
             else:
                 # JSON mode
                 base_params["text"] = {"format": {"type": "json_object"}}
+        
+        # add verbosity if specified                
+        if self.verbosity is not None:
+            if base_params.get("text") is None:
+                base_params["text"] = {}
+            base_params["text"]["verbosity"] = self.verbosity
 
         # Filter out None values
         request_params: Dict[str, Any] = {k: v for k, v in base_params.items() if v is not None}
