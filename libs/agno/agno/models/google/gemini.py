@@ -2,6 +2,7 @@ import asyncio
 import base64
 import json
 import mimetypes
+import re
 import time
 from collections.abc import AsyncIterator
 from dataclasses import dataclass
@@ -839,7 +840,6 @@ class Gemini(Model):
                                     message_parts.insert(0, video_file)
                     except Exception as e:
                         log_warning(f"Failed to load video from {message.videos}: {str(e)}")
-                        continue
 
                 # Add audio to the message for the model
                 if message.audio is not None:
@@ -962,7 +962,7 @@ class Gemini(Model):
         elif video.filepath is not None:
             video_path = video.filepath if isinstance(video.filepath, Path) else Path(video.filepath)
 
-            remote_file_name = f"files/{video_path.stem.lower().replace('_', '')}"
+            remote_file_name = f"files/{re.sub(r'[^a-z0-9-]', '', video_path.stem.lower().replace(' ', '-')) or 'video'}"
             # Check if video is already uploaded
             existing_video_upload = None
             try:
