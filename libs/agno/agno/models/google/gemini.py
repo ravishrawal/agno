@@ -918,7 +918,7 @@ class Gemini(Model):
             except Exception as e:
                 log_warning(f"Error getting file {remote_file_name}: {str(e)}")
 
-            if existing_audio_upload and existing_audio_upload.state and existing_audio_upload.state.name == "SUCCESS":
+            if existing_audio_upload and existing_audio_upload.state and existing_audio_upload.state.name in ("SUCCESS", "ACTIVE"):
                 audio_file = existing_audio_upload
             else:
                 # Upload the video file to the Gemini API
@@ -971,7 +971,7 @@ class Gemini(Model):
             except Exception as e:
                 log_warning(f"Error getting file {remote_file_name}: {str(e)}")
 
-            if existing_video_upload and existing_video_upload.state and existing_video_upload.state.name == "SUCCESS":
+            if existing_video_upload and existing_video_upload.state and existing_video_upload.state.name in ("SUCCESS", "ACTIVE"):
                 video_file = existing_video_upload
             else:
                 # Upload the video file to the Gemini API
@@ -1064,7 +1064,7 @@ class Gemini(Model):
                     if (
                         remote_file
                         and remote_file.state
-                        and remote_file.state.name == "SUCCESS"
+                        and remote_file.state.name in ("SUCCESS", "ACTIVE")
                         and remote_file.uri
                         and remote_file.mime_type
                     ):
